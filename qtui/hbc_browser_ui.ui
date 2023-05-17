@@ -69,12 +69,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionWizard"/>
    <addaction name="separator"/>
    <addaction name="actionImageBrowser"/>
-   <addaction name="actionTools"/>
    <addaction name="actionGisTools"/>
+   <addaction name="actionTools"/>
    <addaction name="actionAnnotation"/>
+   <addaction name="actionWizard"/>
    <addaction name="separator"/>
    <addaction name="actionQuit"/>
    <addaction name="separator"/>
@@ -437,7 +437,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/fa_regular/qtui/icons/fa_regular/compass.svg</normaloff>:/fa_regular/qtui/icons/fa_regular/compass.svg</iconset>
+     <normaloff>:/grass/qtui/icons/grass/grass_bold_dark.png</normaloff>:/grass/qtui/icons/grass/grass_bold_dark.png</iconset>
    </property>
    <property name="text">
     <string>GisTools</string>
@@ -464,7 +464,7 @@
   <action name="actiongrass_settings">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/grass/qtui/icons/grass/grass_bold_dark.png</normaloff>:/grass/qtui/icons/grass/grass_bold_dark.png</iconset>
+     <normaloff>:/grass/qtui/icons/grass/GrassProperties.svg</normaloff>:/grass/qtui/icons/grass/GrassProperties.svg</iconset>
    </property>
    <property name="text">
     <string>grass_settings</string>

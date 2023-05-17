@@ -1007,7 +1007,7 @@ class GroundTrutherDockWidget(QtWidgets.QDockWidget, Ui_GroundTrutherDockWidgetB
             self.w.gisTools_logger.hide()
         else:
             self.w.gisTools.show()
-            self.w.gisTools_logger.show()
+            #self.w.gisTools_logger.show()
 
     def showImageViewer(self):
         """docstring"""
