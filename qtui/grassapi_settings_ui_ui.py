@@ -97,7 +97,7 @@ public:
     {
         if (GRASSAPI->objectName().isEmpty())
             GRASSAPI->setObjectName(QString::fromUtf8("GRASSAPI"));
-        GRASSAPI->resize(458, 948);
+        GRASSAPI->resize(435, 457);
         GRASSAPI->setMinimumSize(QSize(2, 0));
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/GRASS/icons/GRASS/grass-40x40.png"), QSize(), QIcon::Normal, QIcon::Off);
@@ -109,7 +109,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 424, 653));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 401, 653));
         verticalLayout_3 = new QVBoxLayout(scrollAreaWidgetContents);
         verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
         groupBox = new QGroupBox(scrollAreaWidgetContents);
@@ -172,7 +172,7 @@ public:
         reload->setObjectName(QString::fromUtf8("reload"));
         reload->setMinimumSize(QSize(30, 30));
         QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/QGIS/icons/QGIS_Images/themes/default/mActionReload.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon1.addFile(QString::fromUtf8(":/fa_solid/qtui/icons/fa_solid/rotate.svg"), QSize(), QIcon::Normal, QIcon::Off);
         reload->setIcon(icon1);
 
         horizontalLayout_2->addWidget(reload);

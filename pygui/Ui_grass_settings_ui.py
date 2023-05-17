@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GRASSAPI(object):
     def setupUi(self, GRASSAPI):
         GRASSAPI.setObjectName("GRASSAPI")
-        GRASSAPI.resize(458, 948)
+        GRASSAPI.resize(435, 457)
         GRASSAPI.setMinimumSize(QtCore.QSize(2, 0))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/GRASS/icons/GRASS/grass-40x40.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -25,7 +25,7 @@ class Ui_GRASSAPI(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 424, 653))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 401, 653))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -75,7 +75,7 @@ class Ui_GRASSAPI(object):
         self.reload = QtWidgets.QToolButton(self.groupBox_2)
         self.reload.setMinimumSize(QtCore.QSize(30, 30))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/QGIS/icons/QGIS_Images/themes/default/mActionReload.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/fa_solid/qtui/icons/fa_solid/rotate.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.reload.setIcon(icon1)
         self.reload.setObjectName("reload")
         self.horizontalLayout_2.addWidget(self.reload)
