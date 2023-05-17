@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'GroundTruther'
-copyright = u'2013, epinux'
+copyright = u'2023, epinux'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

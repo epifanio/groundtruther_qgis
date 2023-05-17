@@ -26,6 +26,7 @@
   <qresource prefix="custom">
     <file>qtui/icons/custom/ellipse.png</file>
     <file>qtui/icons/custom/rectangle.png</file>
+    <file>qtui/icons/custom/target.png</file>
   </qresource>
   <qresource prefix="marker">
     <file>qtui/icons/marker/blue_circle.png</file>

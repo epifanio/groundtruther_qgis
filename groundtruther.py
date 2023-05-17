@@ -231,7 +231,7 @@ class GroundTruther:
         #     maptool_callback=self.print_coords)
         
 
-        image_query_icon_path = ':/grass/target.png'
+        image_query_icon_path = ':/custom/qtui/icons/custom/target.png'
         image_query_icon = QIcon(image_query_icon_path)
         image_query_action = QAction(image_query_icon, self.tr(u'Image Browser'), self.iface.mainWindow())
         #
