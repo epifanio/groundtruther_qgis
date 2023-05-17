@@ -213,13 +213,13 @@ class GroundTruther:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/groundtruther/icon.png'
+        icon_path = ':/qgis/qtui/icons/qgis/epi.gif'
         self.add_action(
             icon_path,
             text=self.tr(u'GroundTruther'),
             callback=self.run,
             parent=self.iface.mainWindow())
-        icon_path = ':/plugins/groundtruther/icon.png'
+        icon_path = ':/qgis/qtui/icons/qgis/epi.gif'
         
         # self.query_tool = self.add_action(
         #     icon_path,
@@ -231,7 +231,7 @@ class GroundTruther:
         #     maptool_callback=self.print_coords)
         
 
-        image_query_icon_path = ':/plugins/groundtruther/icon.png'
+        image_query_icon_path = ':/grass/target.png'
         image_query_icon = QIcon(image_query_icon_path)
         image_query_action = QAction(image_query_icon, self.tr(u'Image Browser'), self.iface.mainWindow())
         #
@@ -251,7 +251,7 @@ class GroundTruther:
         self.actions.append(image_query_action)
 
         
-        grass_query_icon_path = ':/plugins/groundtruther/icon.png'
+        grass_query_icon_path = ':/grass/qtui/icons/grass/gui-query.gif'
         grass_query_icon = QIcon(grass_query_icon_path)
         grass_query_action = QAction(grass_query_icon, self.tr(u'GRASS Query'), self.iface.mainWindow())
         #
@@ -271,7 +271,7 @@ class GroundTruther:
         self.actions.append(grass_query_action)
         
         
-        grass_cpr_icon_path = ':/plugins/groundtruther/icon.png'
+        grass_cpr_icon_path = ':/grass/qtui/icons/grass/mActionSelectRectangle.svg'
         grass_cpr_icon = QIcon(grass_cpr_icon_path)
         grass_cpr_action = QAction(grass_cpr_icon, self.tr(u'GRASS Computational Region'), self.iface.mainWindow())
         #
