@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="grass">
     <file>qtui/icons/grass/grass_bold_dark.png</file>
+    <file>qtui/icons/custom/target.png</file>
     <file>qtui/icons/grass/grass_dark.png</file>
     <file>qtui/icons/grass/grass-192x192.png</file>
     <file>qtui/icons/grass/grass_dark.svg</file>
