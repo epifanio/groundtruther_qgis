@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QWidget
 from PyQt5.QtCore import QRunnable, pyqtSlot, QThreadPool, pyqtSignal, QObject, pyqtSlot
 # from pygui.geomorphon_gui import GeoMorphon
-from groundtruther.pygui.Ui_geomorphon_ui import Ui_geomorphon
+from groundtruther.pygui.Ui_paramscale_ui import Ui_paramscale
 
 
 import requests
@@ -46,21 +46,21 @@ class Worker(QRunnable):
         # print(returned_item)
         self.signal.module_output.emit(returned_item)
 
-class GeoMorphonWidget(QWidget, Ui_geomorphon):
+class ParamScaleWidget(QWidget, Ui_paramscale):
     """docstring"""
 
     def __init__(self, parent):
         self.parent = parent
-        super(GeoMorphonWidget, self).__init__(parent)
+        super(ParamScaleWidget, self).__init__(parent)
         # QWidget.__init__(self, parent)
         self.threadpool = QThreadPool()
         print("Multithreading with maximum %d threads" %
               self.threadpool.maxThreadCount())
         self.setupUi(self)
-        self.module_name = 'geomorphon'
+        self.module_name = 'paramscale'
         self.reload_layers.clicked.connect(self.get_rvr_list)
         #self.exit.clicked.connect(self.close)
-        self.run.clicked.connect(self.exec_geomorphon)
+        self.run.clicked.connect(self.exec_paramscale)
         # self.get_rvr_list()
         # print(self.parent)
         
@@ -78,12 +78,12 @@ class GeoMorphonWidget(QWidget, Ui_geomorphon):
         }
 
         response = requests.get('http://localhost/api/get_rvg_list', params=params, headers=headers)
-        actual_item = self.elevation.currentText()
-        self.elevation.clear()
-        self.elevation.addItems(response.json()['data']['raster'])
-        self.elevation.setCurrentText(actual_item)
+        actual_item = self.input.currentText()
+        self.input.clear()
+        self.input.addItems(response.json()['data']['raster'])
+        self.input.setCurrentText(actual_item)
   
-    def exec_geomorphon(self):
+    def exec_paramscale(self):
         headers = {
             'accept': 'application/json',
             'content-type': 'application/x-www-form-urlencoded',
@@ -97,29 +97,25 @@ class GeoMorphonWidget(QWidget, Ui_geomorphon):
             overwrite = True
         else:
             overwrite = False
-        if self.flag_m.isChecked():
-            flag_m = True
+        if self.flag_c.isChecked():
+            flag_c = True
         else:
-            flag_m = False
-        if self.flag_e.isChecked():
-            flag_e = True
-        else:
-            flag_e = False
+            flag_c = False
         params = {
             'location_name':  self.gisenv['LOCATION_NAME'],
             'mapset_name': self.gisenv['MAPSET'],
             'gisdb': self.gisenv['GISDBASE'],
-            'elevation': self.elevation.currentText(),
+            'input': self.input.currentText(),
             # 'forms': self.forms.text(),
-            'search': self.search.value(),
-            'skip': self.skip.value(),
-            'flat': self.flat.text(),
-            'dist': self.dist.text(),
-            'm': flag_m,
-            'e': flag_e,
+            'slope_tolerance': self.slope_tolerance.text(),
+            'curvature_tolerance': self.curvature_tolerance.text(),
+            'size': self.size.value(),
+            'exponent': self.exponent.text(),
+            'zscale': self.zscale.text(),
+            'c': flag_c,
             'overwrite': overwrite,
             'predictors': derivatives,
-            'output_suffix': self.output_suffix.text(),
+            'output': self.output_suffix.text(),
         }
         if self.parent.region_response:
             params['region'] = (',').join([self.parent.region_response['north'], 

@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QWidget
 from PyQt5.QtCore import QRunnable, pyqtSlot, QThreadPool, pyqtSignal, QObject, pyqtSlot
 # from pygui.geomorphon_gui import GeoMorphon
-from groundtruther.pygui.Ui_geomorphon_ui import Ui_geomorphon
+from groundtruther.pygui.Ui_grm_lsi_ui import Ui_grm_lsi
 
 
 import requests
@@ -46,21 +46,21 @@ class Worker(QRunnable):
         # print(returned_item)
         self.signal.module_output.emit(returned_item)
 
-class GeoMorphonWidget(QWidget, Ui_geomorphon):
+class GrmLsiWidget(QWidget, Ui_grm_lsi):
     """docstring"""
 
     def __init__(self, parent):
         self.parent = parent
-        super(GeoMorphonWidget, self).__init__(parent)
+        super(GrmLsiWidget, self).__init__(parent)
         # QWidget.__init__(self, parent)
         self.threadpool = QThreadPool()
         print("Multithreading with maximum %d threads" %
               self.threadpool.maxThreadCount())
         self.setupUi(self)
-        self.module_name = 'geomorphon'
+        self.module_name = 'GRMLSI'
         self.reload_layers.clicked.connect(self.get_rvr_list)
         #self.exit.clicked.connect(self.close)
-        self.run.clicked.connect(self.exec_geomorphon)
+        self.run.clicked.connect(self.exec_grm)
         # self.get_rvr_list()
         # print(self.parent)
         
@@ -83,50 +83,46 @@ class GeoMorphonWidget(QWidget, Ui_geomorphon):
         self.elevation.addItems(response.json()['data']['raster'])
         self.elevation.setCurrentText(actual_item)
   
-    def exec_geomorphon(self):
+    def exec_grm(self):
         headers = {
             'accept': 'application/json',
             'content-type': 'application/x-www-form-urlencoded',
         }
 
-        if self.derivatives.isChecked():
-            derivatives = True
-        else:
-            derivatives = False
-        if self.overwrite.isChecked():
-            overwrite = True
-        else:
-            overwrite = False
-        if self.flag_m.isChecked():
-            flag_m = True
-        else:
-            flag_m = False
-        if self.flag_e.isChecked():
-            flag_e = True
-        else:
-            flag_e = False
         params = {
-            'location_name':  self.gisenv['LOCATION_NAME'],
+            'location_name': self.gisenv['LOCATION_NAME'],
             'mapset_name': self.gisenv['MAPSET'],
             'gisdb': self.gisenv['GISDBASE'],
             'elevation': self.elevation.currentText(),
-            # 'forms': self.forms.text(),
-            'search': self.search.value(),
-            'skip': self.skip.value(),
-            'flat': self.flat.text(),
-            'dist': self.dist.text(),
-            'm': flag_m,
-            'e': flag_e,
-            'overwrite': overwrite,
-            'predictors': derivatives,
-            'output_suffix': self.output_suffix.text(),
+            'swc_search': self.swc_search.value(),
+            'swc_skip': self.swc_skip.value(),
+            'swc_flat': self.swc_flat.text(),
+            'swc_dist': self.swc_dist.text(),
+            'iter_thin': self.iter_thin.text(),
+            'swc_area_lesser': self.swc_area_lesser.text(),
+            'generalize_method': self.generalize_method.currentText(),
+            'generalize_threshold': self.generalize_threshold.text(),
+            'sw_search': self.sw_search.value(),
+            'sw_skip': self.sw_skip.value(),
+            'sw_flat': self.sw_flat.text(),
+            'sw_dist': self.sw_dist.text(),
+            'sw_area_lesser': self.sw_area_lesser.text(),
+            'buffer_distance': self.buffer_distance.text(),
+            'transect_split_length': self.transect_split_length.text(),
+            'point_dmax': self.point_dmax.text(),
+            'clean': 'false',
+            'vclean_rmdangle_threshold': self.vclean_rmdangle_threshold.text(),
+            'vclean_rmarea_threshold': self.vclean_rmarea_threshold.text(),
+            'transect_side_distances': self.transect_side_distances.text()
         }
+
         if self.parent.region_response:
             params['region'] = (',').join([self.parent.region_response['north'], 
                                 self.parent.region_response['south'], 
                                 self.parent.region_response['west'], 
                                 self.parent.region_response['east']])
         self.parent.grass_mdi.gis_tool_report.setHtml(str('... running ...'))
+        print(headers, params)
         self.worker = Worker(self.run_grassapi, headers, params)
         self.worker.signal.module_output.connect(self.show_module_output_mem)
         self.threadpool.start(self.worker)
@@ -154,6 +150,50 @@ class GeoMorphonWidget(QWidget, Ui_geomorphon):
         #print(self.parent)
         # print(self.parent.grass_dialog.set_grass_location())
         self.parent.grass_mdi.gis_tool_report.setHtml(str(module_output))
+        # dict_keys(['max_dist', 
+        #            'max_3d_dist', 
+        #            'H', 
+        #            'W', 
+        #            'side_a', 
+        #            'side_b', 
+        #            'mean_displacement', 
+        #            'encoded_profile_string', 
+        #            'encoded_profiles_string', 
+        #            'encoded_swc_string', 
+        #            'img_profile_map'])
+        #self.parent.grass_mdi.gis_tool_report.setHtml(str(f"""<img src="data:image/png;base64, {module_output['img_profile_map']}">"""))
+        self.parent.grass_mdi.gis_tool_report.setHtml(f"""<table>
+            <tbody>
+                <tr>
+                <th>Length</th>
+                <td>{module_output['max_dist']}</td>
+                </tr>
+                <tr>  
+                <th>Length 3D</th>
+                <td>{module_output['max_3d_dist']}</td>
+                </tr>
+                <tr>  
+                <th>Heigth</th>
+                <td>{module_output['H']}</td>
+                </tr>
+                <tr>  
+                <th>Width</th>
+                <td>{module_output['W']}</td>
+                </tr>
+                <tr>  
+                <th>mean_displacement</th>
+                <td>{module_output['mean_displacement']}</td>
+                </tr>
+            </tbody>
+            </table>
+            <br>
+            <img src="data:image/png;base64, {module_output["encoded_profile_string"]}">
+            <br>
+            <img src="data:image/png;base64, {module_output["encoded_profiles_string"]}">
+            <br>
+            <img src="data:image/png;base64, {module_output["encoded_swc_string"]}">
+            <br>
+            <img src="data:image/png;base64, {module_output["img_profile_map"]}">""")
         if self.add_output.isChecked():
             layer_name = str(uuid.uuid1())
             newsrc = f'/vsimem/newsrc_{layer_name}'
@@ -172,7 +212,7 @@ class GeoMorphonWidget(QWidget, Ui_geomorphon):
         
         
     def run_grassapi(self, headers, params):
-        self.response = requests.post(f'http://localhost/api/{self.module_name}', params=params, headers=headers)
+        self.response = requests.post(f'http://localhost/api/{self.module_name}', headers=headers, params=params)
         try:
             self.returned_item = self.response.json()
         except:
