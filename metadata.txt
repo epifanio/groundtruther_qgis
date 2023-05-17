@@ -10,10 +10,10 @@ version=0.1
 author=epinux
 email=epiesasha@me.com
 
-about=A tool for seafloor characterization
+about=A toolset for seafloor characterization
 
-tracker=https://github.com/epifanio/groundtruther
-repository=https://github.com/epifanio/groundtruther
+tracker=https://github.com/epifanio/groundtruther_qgis
+repository=https://github.com/epifanio/groundtruther_qgis
 # End of mandatory metadata
 
 # Recommended items:
@@ -25,9 +25,9 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=python
 
-homepage=https://github.com/epifanio/groundtruther
+homepage=https://github.com/epifanio/groundtruther_qgis
 category=Plugins
-icon=icon.png
+icon=qtui/icons/qgis/epi.gif
 # experimental flag
 experimental=True
 
