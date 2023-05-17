@@ -32,7 +32,6 @@ from qgis.gui import QgsVertexMarker, QgsMapToolEmitPoint, QgsRubberBand
 
 
 
-
 from groundtruther.pygui.hbc_browser_gui import HBCBrowserGui
 
 from groundtruther.pygui.image_metadata_gui import ImageMetadata
@@ -51,7 +50,11 @@ from groundtruther.ioutils import parse_annotation
 
 from groundtruther.pygui.grass_settings_gui import GrassSettings
 from grassconfig import GrassConfigDialog
-from run_geomorphon import GeoMorphonDialog
+# from run_geomorphon import GeoMorphonDialog
+from run_geomorphon_mdi import GeoMorphonWidget
+from run_paramscale_mdi import ParamScaleWidget
+from run_grm_lsi_mdi import GrmLsiWidget
+
 from sys import platform
 
 from PyQt5.QtWidgets import *
@@ -64,9 +67,9 @@ import requests
 
 from pygui.Ui_groundtruther_dockwidget_base import Ui_GroundTrutherDockWidgetBase  
 from groundtruther.pygui.grass_mdi_gui import GrassMdi
-from groundtruther.pygui.geomorphon_gui import GeoMorphon
-from groundtruther.pygui.paramscale_gui import ParamScale
-from groundtruther.pygui.grm_lsi_gui import GrmLsi
+# from groundtruther.pygui.geomorphon_gui import GeoMorphon
+# from groundtruther.pygui.paramscale_gui import ParamScale
+# from groundtruther.pygui.grm_lsi_gui import GrmLsi
 
 
 
@@ -218,7 +221,7 @@ class GroundTrutherDockWidget(QtWidgets.QDockWidget, Ui_GroundTrutherDockWidgetB
         self.w.annotation_confidence_spinBox.hide()
         self.w.annotation_confidence_spinBox_label.hide()
 
-        self.getQueryWidget()
+        self.init_grass_ui()
         self.init_grass_toolbar()
         self.region_response = None
         self.w.show()
@@ -232,7 +235,7 @@ class GroundTrutherDockWidget(QtWidgets.QDockWidget, Ui_GroundTrutherDockWidgetB
         self.grass_dialog.exec_()
         print(self.grass_dialog.grassenabled)        
 
-    def getQueryWidget(self):
+    def init_grass_ui(self):
         # create the widget for grass which goes into the splitter
         self.grassWidgetContents = QtWidgets.QMainWindow() #QtWidgets.QWidget()
         self.grassWidgetContents.setObjectName("grassDockWidgetContents")
@@ -243,37 +246,97 @@ class GroundTrutherDockWidget(QtWidgets.QDockWidget, Ui_GroundTrutherDockWidgetB
         #self.grass_tool_layout.setObjectName("grass_tool_layout")
         # create text editor to add query results
         
-        self.gis_tool_report = QtWidgets.QTextEdit()
-        self.gis_tool_report.setObjectName("gis_tool_report")
+        #self.gis_tool_report = QtWidgets.QTextEdit()
+        #self.gis_tool_report.setObjectName("gis_tool_report")
         
         
         self.grass_mdi = GrassMdi()
         layout1 = QHBoxLayout()
-        layout2 = QVBoxLayout()
-        layout2.addWidget(self.gis_tool_report)
-        layout2.addWidget(self.grass_mdi)
-        layout1.addLayout( layout2 )
+        #layout2 = QVBoxLayout()
+        #layout2.addWidget(self.gis_tool_report)
+        layout1.addWidget(self.grass_mdi)
+        #layout1.addLayout( layout2 )
         self.grass_widget = QWidget()
         self.grass_widget.setLayout(layout1)
         
         #self.grassWidgetContents.setCentralWidget(self.gis_tool_report)
         self.grassWidgetContents.setCentralWidget(self.grass_widget)
 
-        # add text editor widget at index 0
-        #self.grass_tool_layout.addWidget(self.gis_tool_report)
-        
         self.moduleToolBar = self.grassWidgetContents.addToolBar("GrassModules")
         self.moduleToolBar.toggleViewAction().setEnabled(False)
         
-        module_icon_path = ':/plugins/groundtruther/icon.png'
-        module_icon = QIcon(module_icon_path)
-        module_action = QAction(module_icon, self.tr(u'GRASS Module'), self.grassWidgetContents)
+        self.mdi_view = QtWidgets.QComboBox()
+        self.moduleToolBar.addWidget(self.mdi_view)
+        self.mdi_view.insertItems(1,["Tiled","Cascade","Minimize", "Close"])
+        self.mdi_view.currentIndexChanged.connect(self.set_mdi_view)
+
+
+
+        self.r_gemorphon = GeoMorphonWidget(self)    
+        self.r_gemorphon_window = QMdiSubWindow()
+        self.r_gemorphon_window.setWindowTitle("r.geomorphon")
+        self.r_gemorphon_window.setWidget(self.r_gemorphon)
+        self.grass_mdi.grassTools.addSubWindow(self.r_gemorphon_window)
+        self.r_gemorphon_window.setWindowFlags(Qt.WindowMinimizeButtonHint|Qt.WindowMaximizeButtonHint)
+        self.r_gemorphon_window.hide()
+        self.r_gemorphon.exit.clicked.connect(self.view_r_gemorphon)
+        gemorphon_icon_path = ':/grass/qtui/icons/grass/element-cell.gif'
+        gemorphon_icon = QIcon(gemorphon_icon_path)
+        gemorphon_action = QAction(gemorphon_icon, self.tr(u'r.gemorphon'), self.grassWidgetContents)
         #
-        module_action.triggered.connect(self.show_geomorphon)
-        module_action.setEnabled(True)
-        module_action.setCheckable(True)
+        gemorphon_action.triggered.connect(self.view_r_gemorphon)
+        gemorphon_action.setEnabled(True)
+        gemorphon_action.setCheckable(True)
         #
-        self.moduleToolBar.addAction(module_action)
+        self.moduleToolBar.addAction(gemorphon_action)
+        
+        
+        
+        self.r_paramscale = ParamScaleWidget(self)    
+        self.r_paramscale_window = QMdiSubWindow()
+        self.r_paramscale_window.setWindowTitle("r.param.scale")
+        self.r_paramscale_window.setWidget(self.r_paramscale)
+        self.grass_mdi.grassTools.addSubWindow(self.r_paramscale_window)
+        self.r_paramscale_window.setWindowFlags(Qt.WindowMinimizeButtonHint|Qt.WindowMaximizeButtonHint)
+        self.r_paramscale_window.hide()
+        self.r_paramscale.exit.clicked.connect(self.view_r_paramscale)
+        paramscale_icon_path = ':/grass/qtui/icons/grass/element-cell.gif'
+        paramscale_icon = QIcon(paramscale_icon_path)
+        paramscale_action = QAction(paramscale_icon, self.tr(u'r.param.scale'), self.grassWidgetContents)
+        #
+        paramscale_action.triggered.connect(self.view_r_paramscale)
+        paramscale_action.setEnabled(True)
+        paramscale_action.setCheckable(True)
+        
+        
+        
+        self.r_grm_lsi = GrmLsiWidget(self)    
+        self.r_grm_lsi_window = QMdiSubWindow()
+        self.r_grm_lsi_window.setWindowTitle("r.grm.lsi")
+        self.r_grm_lsi_window.setWidget(self.r_grm_lsi)
+        self.grass_mdi.grassTools.addSubWindow(self.r_grm_lsi_window)
+        #self.r_grm_lsi_window.setWindowTitle("r.grm.lsi")
+        self.r_grm_lsi_window.setWindowFlags(Qt.WindowMinimizeButtonHint|Qt.WindowMaximizeButtonHint)
+        self.r_grm_lsi_window.hide()
+        self.r_grm_lsi.exit.clicked.connect(self.view_r_grm_lsi)
+        grm_lsi_icon_path = ':/grass/qtui/icons/grass/element-cell.gif'
+        grm_lsi_icon = QIcon(grm_lsi_icon_path)
+        grm_lsi_action = QAction(grm_lsi_icon, self.tr(u'r.grm.lsi'), self.grassWidgetContents)
+        #
+        grm_lsi_action.triggered.connect(self.view_r_grm_lsi)
+        grm_lsi_action.setEnabled(True)
+        grm_lsi_action.setCheckable(True)
+        
+
+        
+        
+        
+        
+        
+        #
+        self.moduleToolBar.addAction(gemorphon_action)
+        self.moduleToolBar.addAction(paramscale_action)
+        self.moduleToolBar.addAction(grm_lsi_action)
         
         # Using a QToolBar object
         # editToolBar = QToolBar("Edit", self.grassWidgetContents)
@@ -283,17 +346,73 @@ class GroundTrutherDockWidget(QtWidgets.QDockWidget, Ui_GroundTrutherDockWidgetB
         # self.grassWidgetContents.addToolBar(Qt.LeftToolBarArea, helpToolBar)
         
         #
-        self.geomorphon_dialog = GeoMorphonDialog(self)
+        # self.geomorphon_dialog = GeoMorphonDialog(self)
+        self.grass_mdi.zoom_in.clicked.connect(self.onZoomInClicked)
+        self.grass_mdi.zoom_out.clicked.connect(self.onZoomOutClicked)
+        self.grass_mdi.copy.clicked.connect(self.grass_mdi.gis_tool_report.copy)
+        self.grass_mdi.selectAll.clicked.connect(self.grass_mdi.gis_tool_report.selectAll)
+        
+        self.grass_mdi.clear.clicked.connect(self.onClearClicked)
         
         self.w.gisToolSplitter.insertWidget(0, self.grassWidgetContents)
 
+    def onZoomInClicked(self):
+        self.grass_mdi.gis_tool_report.zoomIn(1)
+
+    def onZoomOutClicked(self):
+        self.grass_mdi.gis_tool_report.zoomOut(1)
+    
+    def onClearClicked(self):
+        self.grass_mdi.gis_tool_report.clear()
+
+    def view_r_gemorphon(self, module):
+        if self.r_gemorphon_window.isVisible():
+            self.r_gemorphon_window.hide()
+        else:
+            self.r_gemorphon.get_rvr_list()
+            self.r_gemorphon_window.show()
+
+    def view_r_paramscale(self, module):
+        if self.r_paramscale_window.isVisible():
+            self.r_paramscale_window.hide()
+        else:
+            self.r_paramscale.get_rvr_list()
+            self.r_paramscale_window.show()
+             
+    def view_r_grm_lsi(self, module):
+        if self.r_grm_lsi_window.isVisible():
+            self.r_grm_lsi_window.hide()
+        else:
+            self.r_grm_lsi.get_rvr_list()
+            self.r_grm_lsi_window.show()
+            
+    
+        
+    def set_mdi_view(self, index):
+        if self.mdi_view.itemText(index) == 'Cascade':
+            self.grass_mdi.grassTools.cascadeSubWindows()
+        if self.mdi_view.itemText(index) == 'Tiled':
+            self.grass_mdi.grassTools.tileSubWindows()
+        if self.mdi_view.itemText(index) == 'Minimize':
+            for i in self.grass_mdi.grassTools.subWindowList():
+                print(i)
+                if i.isVisible():
+                    #i.hide()
+                    i.showMinimized()
+        if self.mdi_view.itemText(index) == 'Close':
+            for i in self.grass_mdi.grassTools.subWindowList():
+                print(i)
+                if i.isVisible():
+                    i.hide()
+                    #i.close()
+            
     def show_module(self):
         print('show module')
 
-    def show_geomorphon(self):
-        """docstring"""
-        self.geomorphon_dialog.get_rvr_list()
-        self.geomorphon_dialog.exec_()
+    # def show_geomorphon(self):
+    #     """docstring"""
+    #     self.geomorphon_dialog.get_rvr_list()
+    #     self.geomorphon_dialog.exec_()
 
     def set_settings(self):
         """docstring"""
@@ -382,7 +501,7 @@ class GroundTrutherDockWidget(QtWidgets.QDockWidget, Ui_GroundTrutherDockWidgetB
     
     def get_query_message(self, stringa):
         print('stringa', stringa)
-        self.gis_tool_report.setHtml(stringa)
+        self.grass_mdi.gis_tool_report.setHtml(stringa)
         
     def get_query_position(self, lat, lon):
         print('position', lat, lon)
