@@ -130,4 +130,10 @@ dmypy.json
 
 # GRASSDATA
 grassdata/
-dara/
+data/
+i18n/
+test/
+scratchpad/
+qtui/*.py
+README.html
+README.txt
