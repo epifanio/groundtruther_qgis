@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>948</height>
+    <width>435</width>
+    <height>457</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -34,7 +34,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>424</width>
+        <width>401</width>
         <height>653</height>
        </rect>
       </property>
@@ -147,8 +147,8 @@
                <string>...</string>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>:/QGIS/icons/QGIS_Images/themes/default/mActionReload.svg</normaloff>:/QGIS/icons/QGIS_Images/themes/default/mActionReload.svg</iconset>
+               <iconset resource="../../../../../../../../../../groundtruther/resources.qrc">
+                <normaloff>:/fa_solid/qtui/icons/fa_solid/rotate.svg</normaloff>:/fa_solid/qtui/icons/fa_solid/rotate.svg</iconset>
               </property>
              </widget>
             </item>
